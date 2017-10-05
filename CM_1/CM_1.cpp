@@ -116,6 +116,7 @@ int main()
 	//—делай менё!!!!
 	cout << endl << "SWAP_STOLB!" << endl;
 
+
 	Swp_stlb(M, n);
 	cout << endl << "TOP_TRNGL" << endl;
 	Top_trngl(M, n);
