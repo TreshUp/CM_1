@@ -4,10 +4,10 @@
 #include <cstdlib>
 #include <ctime>
 using namespace std;
-int n = 7;								 //размерность матрицы
+int n = 3;								 //размерность матрицы
 
 										 //Random заполнение матрицы от 0 до 9
-void Rnd(int **M, int n)
+void Rnd(float **M, int n)
 {
 	int i = 0, j = 0;
 	srand(time(NULL));                      // инициализация функции rand значением функции time
@@ -22,7 +22,7 @@ void Rnd(int **M, int n)
 	}
 }
 //Поиск максимального по столбцу
-void Swp_stlb(int **M, int n)
+void Swp_stlb(float **M, int n)
 {
 	int i = 0, j = 0;
 	for (j = 0; j < n; j++) //столбцы
@@ -46,7 +46,7 @@ void Swp_stlb(int **M, int n)
 		}
 	}
 #pragma region Print
-	for (i = 0; i < n; i++)
+	for (i = 0; i < n; i++) 
 	{
 		for (j = 0; j < n; j++)
 		{
@@ -69,17 +69,19 @@ void Swp_stlb(int **M, int n)
 //	}
 //	return det;
 //}
-void Top_trngl(int **M, int n)
+void Top_trngl(float **M, int n)
 {
 	int i = 0, j = 0;
 	int flag = 0;
 	int diag_el = 1;
-	diag_el = M[flag][flag];
-	while (flag != n)
+	
+	while (flag != n-1)
 	{
-		if (diag_el != 0)
+		diag_el = M[flag][flag];
+		if (diag_el != 0)			//проверка на нулевой столбец
 		{
-			for (i = 0; i < n; i++)
+			//деление на очередной диагональный элемент
+			for (i = flag; i < n; i++)
 			{
 				for (j = 0; j < n; j++)
 				{
@@ -88,29 +90,60 @@ void Top_trngl(int **M, int n)
 				}
 
 			}
+			//
 		}
 		else
 		{
 			cout << "STOP" << endl;
 			break;
 		}
+		//вывод после деления
+		cout<<"AFTER DEL"<<endl;
+		for (i = 0; i < n; i++)
+		{
+			for (j = 0; j < n; j++)
+			{
+				std::cout.setf(std::ios::fixed);
+				cout.precision(2);
+				cout << " " << M[i][j];
+			}
+			cout << endl;
+		}
+		cout << endl << "TOBI PIZDA"<<endl;
+		for (int k = 0; k < n; k++) //вычитание 
+		{
+			//float del = M[k][0];
+			for (int l = 1; l < n; l++)
+			{
+				if (l != k)
+				{
+					float del = M[l][k];
+					M[l][k] = M[k][k] * del - del;
+				}
+			}
+		}
 		flag++;
 	}
+	//вывод
+	
 	for (i = 0; i < n; i++)
 	{
 		for (j = 0; j < n; j++)
 		{
-			cout << " " << M[i][j];
+			std::cout.setf(std::ios::fixed);
+			cout.precision(2);
+			cout<< " " << M[i][j];
 		}
 		cout << endl;
 	}
 }
 int main()
 {
-	int **M = new int*[n];
+	float **M = new float*[n];
 	for (int count = 0; count < n; count++)
-		M[count] = new int[n];
+		M[count] = new float[n];
 	cout << endl << "SOURCE!" << endl;
+
 	Rnd(M, n);
 	//to_do
 	//Сделай менЮ!!!!
