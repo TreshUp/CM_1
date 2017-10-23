@@ -13,38 +13,45 @@ void Rnd(float **M, int n)
 	srand(time(NULL));                      // инициализация функции rand значением функции time
 	for (i = 0; i < n; i++)
 	{
-		for (j = 0; j < n; j++)
+		for (j = 0; j < n+1; j++)
 		{
 			M[i][j] = rand() % 9 + 1;
+			//cin >> M[i][j];
 			cout << " " << M[i][j];
 		}
 		cout << endl;
 	}
 }
 //Поиск максимального по столбцу
-void Swp_stlb(float **M, int n)
+void Swp_stlb(float **M, int n, int flag)
 {
 	int i = 0, j = 0;
-	for (j = 0; j < n; j++) //столбцы
-	{
-		int max = M[0][j]; //за макс возьмем первый элемент в каждом столбце
-		int max_i = 0, max_j = j; // координаты текущего макса
+	//for (j = 0; j < n; j++) //столбцы
+	//{
+		int max = M[0][flag]; //за макс возьмем первый элемент в каждом столбце
+		int max_i = 0;//, max_j = j; // координаты текущего макса
 		for (i = 0; i < n; i++) //строки
 		{
-			if (abs(M[i][j]) > abs(max))
+			if (abs(M[i][flag]) > abs(max))
 			{
-				max = M[i][j];
+				max = M[i][flag];
 				max_i = i;
-				max_j = j;
+				//max_j = j;
 			}
 		}
-		if (M[j][j] != max)
+		if (M[flag][flag] != max)
 		{
-			int swp = M[j][j];
-			M[j][j] = max;
-			M[max_i][max_j] = swp;
+			for (j = 0;j < n; j++)
+			{
+				float swp = M[flag][j];
+				M[flag][j] = M[max_i][j];
+				M[max_i][j] = swp;
+			}
+			
+			//M[j][j] = max;
+			//M[max_i][max_j] = swp;
 		}
-	}
+	//}
 #pragma region Print
 	for (i = 0; i < n; i++) 
 	{
@@ -75,30 +82,65 @@ void Top_trngl(float **M, int n)
 	int flag = 0;
 	int diag_el = 1;
 	
-	while (flag != n-1)
+	//while (flag != n)
+	//{
+	//	diag_el = M[flag][flag];
+	//	if (diag_el != 0)			//проверка на нулевой столбец
+	//	{
+	//		//деление на очередной диагональный элемент
+	//		//какой-то бред
+	//		//for (i = flag; i < n; i++)
+	//		//{
+	//			for (j = 0; j < n; j++)
+	//			{
+
+	//				M[flag][j] = M[flag][j] / (1.0*diag_el);
+	//			}
+
+	//		//}
+	//		//
+	//	}
+	//	else
+	//	{
+	//		cout << "STOP" << endl;
+	//		break;
+	//	}
+	//	//вывод после деления
+	//	cout<<"AFTER DEL"<<endl;
+	//	for (i = 0; i < n; i++)
+	//	{
+	//		for (j = 0; j < n; j++)
+	//		{
+	//			std::cout.setf(std::ios::fixed);
+	//			cout.precision(2);
+	//			cout << " " << M[i][j];
+	//		}
+	//		cout << endl;
+	//	}
+	//	cout << endl << "TOBI PIZDA"<<endl;
+	//	for (int k = flag; k < n; k++) //вычитание 
+	//	{
+	//		//float del = M[k][0];
+	//		for (int l = flag+1; l < n; l++)
+	//		{
+	//			//if (l != k)
+	//			//{
+	//				float del = M[l][k];
+	//				M[l][k] = M[flag][k] * del - del;
+	//			//}
+	//		}
+	//	}
+	//	flag++;
+	//}
+	//вывод
+	while (flag < n)
 	{
-		diag_el = M[flag][flag];
-		if (diag_el != 0)			//проверка на нулевой столбец
+		float del = M[flag][flag];
+		/*for (j = 0; j < n; j++)
 		{
-			//деление на очередной диагональный элемент
-			for (i = flag; i < n; i++)
-			{
-				for (j = 0; j < n; j++)
-				{
-
-					M[i][j] = M[i][j] / (1.0*diag_el);
-				}
-
-			}
-			//
+			M[flag][j] = M[flag][j] / del;
 		}
-		else
-		{
-			cout << "STOP" << endl;
-			break;
-		}
-		//вывод после деления
-		cout<<"AFTER DEL"<<endl;
+		cout << "check" << endl;
 		for (i = 0; i < n; i++)
 		{
 			for (j = 0; j < n; j++)
@@ -108,27 +150,38 @@ void Top_trngl(float **M, int n)
 				cout << " " << M[i][j];
 			}
 			cout << endl;
-		}
-		cout << endl << "TOBI PIZDA"<<endl;
-		for (int k = 0; k < n; k++) //вычитание 
+		}*/
+		if (del != 0)
 		{
-			//float del = M[k][0];
-			for (int l = 1; l < n; l++)
+			i = flag + 1;
+			while (i < n)
 			{
-				if (l != k)
+				//Swp_stlb(M, n, flag);
+				float vych = M[i][flag];
+				for (j = flag; j < n+1; j++)
 				{
-					float del = M[l][k];
-					M[l][k] = M[k][k] * del - del;
+					M[i][j] = -1.0*M[flag][j] * vych / (del*1.0) + M[i][j];
 				}
+				i++;
 			}
 		}
+		cout << "check" << endl;
+		for (i = 0; i < n; i++)
+		{
+			for (j = 0; j < n+1; j++)
+			{
+				std::cout.setf(std::ios::fixed);
+				cout.precision(2);
+				cout << " " << M[i][j];
+			}
+			cout << endl;
+		}
 		flag++;
-	}
-	//вывод
-	
+	} 
+	cout << "check" << endl;
 	for (i = 0; i < n; i++)
 	{
-		for (j = 0; j < n; j++)
+		for (j = 0; j < n+1; j++)
 		{
 			std::cout.setf(std::ios::fixed);
 			cout.precision(2);
@@ -140,6 +193,7 @@ void Top_trngl(float **M, int n)
 int main()
 {
 	float **M = new float*[n];
+	//float *X = new float[n];
 	for (int count = 0; count < n; count++)
 		M[count] = new float[n];
 	cout << endl << "SOURCE!" << endl;
@@ -147,12 +201,20 @@ int main()
 	Rnd(M, n);
 	//to_do
 	//Сделай менЮ!!!!
-	cout << endl << "SWAP_STOLB!" << endl;
+	//cout << endl << "SWAP_STOLB!" << endl;
+	//Swp_stlb(M, n);
 
-
-	Swp_stlb(M, n);
 	cout << endl << "TOP_TRNGL" << endl;
 	Top_trngl(M, n);
+	/*X[n - 1] = M[n - 1][n]/M[n-1][n-1];
+	for (int i = n-2; i >=0; i--)
+	{
+		X[i] = M[i][i + 1];
+		for (int j = 0; j < i; j++)
+		{
+			X[i] = X[i] - X[i + j]*M[][];
+		}
+	}*/
 	system("pause");
 	return 0;
 }
