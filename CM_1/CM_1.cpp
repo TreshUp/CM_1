@@ -15,9 +15,10 @@ void Rnd(float **M,float** Ch, int n)
 	{
 		for (j = 0; j < n+1; j++)
 		{
+			//cin >> M[i][j];
 			M[i][j] = rand() % 9 + 1;
 			Ch[i][j] = M[i][j];
-			//cin >> M[i][j];
+			
 			cout << " " << M[i][j];
 		}
 		cout << endl;
@@ -29,16 +30,16 @@ void Swp_stlb(float **M, int n, int flag)
 	int i = 0, j = 0;
 		float max = M[flag][flag]; //за макс возьмем первый элемент в каждом столбце
 		int max_i = flag;//, max_j = j; // координаты текущего макса
-		for (i = flag; i < n; i++) //строки
+		for (i = flag; i < n-1; i++) //строки
 		{
-			if (M[i][flag] > max)
+			if (abs(M[i][flag]) > abs(max))
 			{
 				max = M[i][flag];
 				max_i = i;
 				//max_j = j;
 			}
 		}
-		if (M[flag][flag] != max)
+		if (abs(M[flag][flag]) != abs(max))
 		{
 			for (j = 0;j < n+1; j++)
 			{
@@ -47,17 +48,17 @@ void Swp_stlb(float **M, int n, int flag)
 				M[max_i][j] = swp;
 			}
 		}
-#pragma region Print
-	cout << "SWAP" << endl;
-	for (i = 0; i < n; i++) 
-	{
-		for (j = 0; j < n+1; j++)
-		{
-			cout << " " << M[i][j];
-		}
-		cout << endl;
-	}
-#pragma endregion
+//#pragma region Print
+//	cout << "SWAP" << endl;
+//	for (i = 0; i < n; i++) 
+//	{
+//		for (j = 0; j < n+1; j++)
+//		{
+//			cout << " " << M[i][j];
+//		}
+//		cout << endl;
+//	}
+//#pragma endregion
 }
 float Deter(float **M, int n)
 {
@@ -68,14 +69,58 @@ float Deter(float **M, int n)
 	}
 	return det;
 }
-void Top_trngl(float **M, int n)
+void Swp_str(float** M, int n,int flag,float* Y)
+{
+	int i = 0, j = 0;
+	float max = M[flag][flag]; //за макс возьмем первый элемент в каждом столбце
+	int max_j = flag; // координаты текущего макса
+
+	for (j = flag; j < n; j++) //столбцы
+	{
+		if (abs(M[flag][j]) > abs(max))
+		{
+			max = M[flag][j];
+			max_j = j;
+		}
+	}
+	if (abs(M[flag][flag]) != abs(max))
+	{
+		for (i = 0; i < n; i++)
+		{
+			float swp = M[i][flag];
+			M[i][flag] = M[i][max_j];
+			M[i][max_j] = swp;
+			
+		}
+		float swp = Y[flag];
+		Y[flag] = Y[max_j];
+		Y[max_j] = swp;//flag
+	}
+	/*cout << "SWAP" << endl;
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < n + 1; j++)
+		{
+			cout << " " << M[i][j];
+		}
+		cout << endl;
+	}*/
+}
+void Top_trngl(float **M, int n,float * Y,int choise)
 {
 	int i = 0, j = 0;
 	int flag = 0;
 	int diag_el = 1;
 	while (flag < n)
 	{
-		Swp_stlb(M, n, flag);
+		if (choise == 0)
+		{
+			Swp_stlb(M, n, flag);
+		}
+		else
+		{
+			Swp_str(M, n, flag, Y);
+		}
 		float del = M[flag][flag];
 		/*for (j = 0; j < n; j++)
 		{
@@ -111,7 +156,7 @@ void Top_trngl(float **M, int n)
 				cout << "STOP" << endl;
 				break;
 			}
-		cout << "check" << endl;
+		/*cout << "check" << endl;
 		for (i = 0; i < n; i++)
 		{
 			for (j = 0; j < n+1; j++)
@@ -121,10 +166,10 @@ void Top_trngl(float **M, int n)
 				cout << " " << M[i][j];
 			}
 			cout << endl;
-		}
+		}*/
 		flag++;
 	} 
-	/*cout << "check" << endl;
+	cout << "check" << endl;
 	for (i = 0; i < n; i++)
 	{
 		for (j = 0; j < n+1; j++)
@@ -134,7 +179,7 @@ void Top_trngl(float **M, int n)
 			cout<< " " << M[i][j];
 		}
 		cout << endl;
-	}*/
+	}
 }void Reverce(float** M, float* X, int n)
 {
 	X[n-1] = M[n-1][n] / M[n-1][n-1];
@@ -156,44 +201,99 @@ int main()
 	float **M = new float*[n];
 	float **Ch = new float*[n];
 	float *X = new float[n];
+	float *Y = new float[n];
 	for (int count = 0; count < n; count++) {
 		M[count] = new float[n];
 		Ch[count] = new float[n];
+		Y[count] = count;
 	}
 	cout << endl << "SOURCE!" << endl;
-
-	Rnd(M,Ch, n);
-	//to_do 
-	//—делай менё!!!!
-	cout << endl << "TOP_TRNGL" << endl;
-	Top_trngl(M, n);
-	float det=Deter(M, n);
-	if (det != 0)
+		Rnd(M,Ch, n);
+	int choice = 2;
+	while (1)
 	{
-		cout << "Determinant=" <<det<<endl;
-		Reverce(M, X,n);
-	}
-	else
-		{
-			cout << "STOP" << endl;
-			system("pause");
- 			return 0;
+		cout << "Press 0 to use the biggest element in column, else press 1. Press 9 to exit: ";
+		cin >> choice;
+		if (choice != 9) {
+			//cout << endl << "TOP_TRNGL" << endl;
+			Top_trngl(M, n, Y, choice);
+			float det = Deter(M, n);
+			if (det != 0)
+			{
+				//cout << "Determinant=" << det << endl;
+				Reverce(M, X, n);
+			}
+			else
+			{
+				cout << "STOP" << endl;
+				system("pause");
+				return 0;
+			}
+			cout << "YY!!" << endl;
+			for (int i = 0; i < n; i++)
+			{
+				cout << Y[i] << " |";
+				//cout << X[i] << " ";
+			}
+			cout << "ROOTS" << endl;
+			int no = 0;
+			for (int i = 0; i < n; i++)
+			{
+				if ((int)Y[i] == i)
+				{
+					cout << i << ") " << X[i] << endl;
+				}
+				else
+				{
+					/*float tmp;
+					tmp = X[i];
+					X[i] = X[(int)Y[i]];
+					X[(int)Y[i]] = tmp;
+					tmp = Y[i];
+					Y[i] = i;
+					Y[(int)tmp] = tmp;
+					cout << i << ") " << X[i] << endl;*/
+					
+					for (int j = no; j < n; j++)
+					{
+						if (i == Y[j])
+						{
+							float tmp;
+							tmp = X[i];
+							X[i] = X[j];
+							X[j] = tmp;
+							tmp = Y[i];
+							Y[i] = Y[j];
+							Y[j] = tmp;
+						}
+					}
+					no++;
+					cout << i << ") " << X[i] << endl; 
+				}
+			}
+			float check = 0;
+			for (int i = 0; i < n; i++)
+			{
+				for (int j = 0; j < n; j++)
+				{
+					check = check + Ch[i][j] * X[j];
+				}
+				cout << "check=" << check << endl;
+				check = 0;
+			}
 		}
-	cout << "ROOTS" << endl;
-	for (int i = 0; i < n; i++)
-	{
-		
-		cout <<i<<") "<<X[i] << endl;
-	}
-	float check = 0;
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
+		else break;
+		for (int i = 0; i < n; i++)
 		{
-			check = check + Ch[i][j] * X[j];
+			for (int j = 0; j < n+1; j++)
+			{
+				M[i][j] = Ch[i][j];
+			}		
+			cout << endl;
 		}
-		cout << "check=" << check << endl;
-		check = 0;
+		for (int count = 0; count < n; count++) {
+			Y[count] = count;
+		}
 	}
 	system("pause");
 	return 0;
