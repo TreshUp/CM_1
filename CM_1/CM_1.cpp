@@ -7,7 +7,7 @@ using namespace std;
 int n = 3;								 //размерность матрицы
 
 										 //Random заполнение матрицы от 0 до 9
-void Rnd(float **M, int n)
+void Rnd(float **M,float** Ch, int n)
 {
 	int i = 0, j = 0;
 	srand(time(NULL));                      // инициализация функции rand значением функции time
@@ -16,6 +16,7 @@ void Rnd(float **M, int n)
 		for (j = 0; j < n+1; j++)
 		{
 			M[i][j] = rand() % 9 + 1;
+			Ch[i][j] = M[i][j];
 			//cin >> M[i][j];
 			cout << " " << M[i][j];
 		}
@@ -26,13 +27,11 @@ void Rnd(float **M, int n)
 void Swp_stlb(float **M, int n, int flag)
 {
 	int i = 0, j = 0;
-	//for (j = 0; j < n; j++) //столбцы
-	//{
-		int max = M[0][flag]; //за макс возьмем первый элемент в каждом столбце
-		int max_i = 0;//, max_j = j; // координаты текущего макса
-		for (i = 0; i < n; i++) //строки
+		float max = M[flag][flag]; //за макс возьмем первый элемент в каждом столбце
+		int max_i = flag;//, max_j = j; // координаты текущего макса
+		for (i = flag; i < n; i++) //строки
 		{
-			if (abs(M[i][flag]) > abs(max))
+			if (M[i][flag] > max)
 			{
 				max = M[i][flag];
 				max_i = i;
@@ -41,21 +40,18 @@ void Swp_stlb(float **M, int n, int flag)
 		}
 		if (M[flag][flag] != max)
 		{
-			for (j = 0;j < n; j++)
+			for (j = 0;j < n+1; j++)
 			{
 				float swp = M[flag][j];
 				M[flag][j] = M[max_i][j];
 				M[max_i][j] = swp;
 			}
-			
-			//M[j][j] = max;
-			//M[max_i][max_j] = swp;
 		}
-	//}
 #pragma region Print
+	cout << "SWAP" << endl;
 	for (i = 0; i < n; i++) 
 	{
-		for (j = 0; j < n; j++)
+		for (j = 0; j < n+1; j++)
 		{
 			cout << " " << M[i][j];
 		}
@@ -63,78 +59,23 @@ void Swp_stlb(float **M, int n, int flag)
 	}
 #pragma endregion
 }
-//int Deter(int **M, int n)
-//{
-//	int det = 0;
-//	for (int i = 0; i < n; i++)
-//	{
-//		for (int j = 0; j < n; j++)
-//		{
-//			
-//			det=det+M[i][j]*Det
-//		}
-//	}
-//	return det;
-//}
+float Deter(float **M, int n)
+{
+	float det = 1;
+	for (int i = 0; i < n; i++)
+	{
+		det = det*M[i][i];
+	}
+	return det;
+}
 void Top_trngl(float **M, int n)
 {
 	int i = 0, j = 0;
 	int flag = 0;
 	int diag_el = 1;
-	
-	//while (flag != n)
-	//{
-	//	diag_el = M[flag][flag];
-	//	if (diag_el != 0)			//проверка на нулевой столбец
-	//	{
-	//		//деление на очередной диагональный элемент
-	//		//какой-то бред
-	//		//for (i = flag; i < n; i++)
-	//		//{
-	//			for (j = 0; j < n; j++)
-	//			{
-
-	//				M[flag][j] = M[flag][j] / (1.0*diag_el);
-	//			}
-
-	//		//}
-	//		//
-	//	}
-	//	else
-	//	{
-	//		cout << "STOP" << endl;
-	//		break;
-	//	}
-	//	//вывод после деления
-	//	cout<<"AFTER DEL"<<endl;
-	//	for (i = 0; i < n; i++)
-	//	{
-	//		for (j = 0; j < n; j++)
-	//		{
-	//			std::cout.setf(std::ios::fixed);
-	//			cout.precision(2);
-	//			cout << " " << M[i][j];
-	//		}
-	//		cout << endl;
-	//	}
-	//	cout << endl << "TOBI PIZDA"<<endl;
-	//	for (int k = flag; k < n; k++) //вычитание 
-	//	{
-	//		//float del = M[k][0];
-	//		for (int l = flag+1; l < n; l++)
-	//		{
-	//			//if (l != k)
-	//			//{
-	//				float del = M[l][k];
-	//				M[l][k] = M[flag][k] * del - del;
-	//			//}
-	//		}
-	//	}
-	//	flag++;
-	//}
-	//вывод
 	while (flag < n)
 	{
+		Swp_stlb(M, n, flag);
 		float del = M[flag][flag];
 		/*for (j = 0; j < n; j++)
 		{
@@ -156,7 +97,7 @@ void Top_trngl(float **M, int n)
 			i = flag + 1;
 			while (i < n)
 			{
-				//Swp_stlb(M, n, flag);
+				
 				float vych = M[i][flag];
 				for (j = flag; j < n+1; j++)
 				{
@@ -165,20 +106,25 @@ void Top_trngl(float **M, int n)
 				i++;
 			}
 		}
+		else
+			{
+				cout << "STOP" << endl;
+				break;
+			}
 		cout << "check" << endl;
 		for (i = 0; i < n; i++)
 		{
 			for (j = 0; j < n+1; j++)
 			{
 				std::cout.setf(std::ios::fixed);
-				cout.precision(2);
+				cout.precision(4);
 				cout << " " << M[i][j];
 			}
 			cout << endl;
 		}
 		flag++;
 	} 
-	cout << "check" << endl;
+	/*cout << "check" << endl;
 	for (i = 0; i < n; i++)
 	{
 		for (j = 0; j < n+1; j++)
@@ -188,33 +134,67 @@ void Top_trngl(float **M, int n)
 			cout<< " " << M[i][j];
 		}
 		cout << endl;
+	}*/
+}void Reverce(float** M, float* X, int n)
+{
+	X[n-1] = M[n-1][n] / M[n-1][n-1];
+	int i = 0,j=1;
+	for (i = 2; i <= n; i++)
+	{
+		X[n - i] = M[n - i][n];
+		while ( j < i)
+		{
+			X[n - i] = X[n - i] - X[n - i + j] * M[n - i][n - i + j];
+			j++;
+		}
+		X[n - i] = X[n - i] / M[n - i][n - i];
+		j = 1;
 	}
 }
 int main()
 {
 	float **M = new float*[n];
-	//float *X = new float[n];
-	for (int count = 0; count < n; count++)
+	float **Ch = new float*[n];
+	float *X = new float[n];
+	for (int count = 0; count < n; count++) {
 		M[count] = new float[n];
+		Ch[count] = new float[n];
+	}
 	cout << endl << "SOURCE!" << endl;
 
-	Rnd(M, n);
-	//to_do
+	Rnd(M,Ch, n);
+	//to_do 
 	//Сделай менЮ!!!!
-	//cout << endl << "SWAP_STOLB!" << endl;
-	//Swp_stlb(M, n);
-
 	cout << endl << "TOP_TRNGL" << endl;
 	Top_trngl(M, n);
-	/*X[n - 1] = M[n - 1][n]/M[n-1][n-1];
-	for (int i = n-2; i >=0; i--)
+	float det=Deter(M, n);
+	if (det != 0)
 	{
-		X[i] = M[i][i + 1];
-		for (int j = 0; j < i; j++)
+		cout << "Determinant=" <<det<<endl;
+		Reverce(M, X,n);
+	}
+	else
 		{
-			X[i] = X[i] - X[i + j]*M[][];
+			cout << "STOP" << endl;
+			system("pause");
+ 			return 0;
 		}
-	}*/
+	cout << "ROOTS" << endl;
+	for (int i = 0; i < n; i++)
+	{
+		
+		cout <<i<<") "<<X[i] << endl;
+	}
+	float check = 0;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			check = check + Ch[i][j] * X[j];
+		}
+		cout << "check=" << check << endl;
+		check = 0;
+	}
 	system("pause");
 	return 0;
 }
